@@ -1,0 +1,11 @@
+#Exclude all.
+/*
+
+#Necessary git files. 
+!.gitignore
+!README.md
+!changelog.md
+
+#Script files.
+!go.mod
+!main.go
