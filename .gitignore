@@ -9,3 +9,6 @@
 #Script files.
 !go.mod
 !main.go
+
+#Example configs
+!config.example.json

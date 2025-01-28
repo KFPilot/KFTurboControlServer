@@ -1,0 +1,6 @@
+{
+    "token": "yoursecret.discord.bottokengoeshere",
+    "valid_hostnames": ["hostname1", "hostname2"],
+    "valid_channelIDs": ["1330951734212345674", "1330951734212345567"],
+    "valid_roleIDs": ["133095173427654321", "133095173427654123"]
+}
