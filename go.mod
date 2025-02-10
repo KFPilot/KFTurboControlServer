@@ -1,6 +1,6 @@
 module KFTurboControlServer
 
-go 1.23
+go 1.19
 
 require github.com/bwmarrin/discordgo v0.28.1
 
