@@ -1,4 +1,4 @@
-module KFTurbo/ServerController
+module KFTurboControlServer
 
 go 1.23.5
 
