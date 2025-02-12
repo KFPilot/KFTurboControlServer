@@ -90,16 +90,16 @@ func main() {
 		switch args[0] {
 		case "/start":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "start-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/stop":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "stop-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/restart":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "restart-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/reboot":
 			execResponse := handleCommand(args[0], "reboot", "")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		default:
 			return
 		}
