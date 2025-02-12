@@ -54,17 +54,12 @@ func main() {
 	}
 
 	sess.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		if m.Author.ID == s.State.User.ID {
-			return
-		}
 
 		err := isValidSource(m.Author.ID, s.State.User.ID, m.ChannelID, m.Member.Roles)
 		if err != nil {
 			fmt.Printf("%v\n", err)
 			return
 		}
-
-		// Check if the bot
 
 		validCommandPrefixes := map[string]struct{}{
 			"/start":   {},
