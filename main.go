@@ -58,42 +58,25 @@ func main() {
 			return
 		}
 
+		err := isValidSource(m.Author.ID, s.State.User.ID, m.ChannelID, m.Member.Roles)
+		if err != nil {
+			fmt.Printf("[-] Message verification failed: %v\n", err)
+			return
+		}
+
+		// Check if the bot
+
 		validCommandPrefixes := map[string]struct{}{
 			"/start":   {},
 			"/stop":    {},
 			"/restart": {},
 			"/reboot":  {},
-			"/help":    {},
 		}
 
 		args := strings.Split((m.Content), " ")
 
 		if !isValidCommand(validCommandPrefixes, args[0]) {
 			fmt.Printf("[-] Invalid command: '%s' is not recognized\n", args[0])
-			s.ChannelMessageSend(m.ChannelID, "Invalid command, try /help")
-			return
-		}
-
-		// This looks cancer but if we use proper indentation, it'll translate over to Discord
-		if args[0] == "/help" {
-			helpMessage := `:eyes:
-
-**Syntax:**
-- **start**: Starts the KFServer(s), if not already running.
-- **stop**: Stops the KFserver(s), if not already stopped.
-- **restart**: Restarts the KFserver(s). Will start it if not running.
-- **reboot**: Reboots the OS of the specified server(s).
-
-**Arguments:**
-- **hostname**: The specific server you want to control.
-- **all**: Applies the command to all servers.
-
-**Example Commands:**
-- **To start a specific server**: start newyork
-- **To restart all servers**: restart all
-`
-			s.ChannelMessageSend(m.ChannelID, helpMessage)
-
 			return
 		}
 
@@ -103,10 +86,9 @@ func main() {
 			return
 		}
 
-		validationResponse, err := validateMessageParameters(m.ChannelID, m.Member.Roles, args[1])
+		err = validateMessageParameters(args[1])
 		if err != nil {
 			fmt.Printf("[-] Message verification failed: %v\n", err)
-			s.ChannelMessageSend(m.ChannelID, validationResponse)
 			return
 		}
 
@@ -159,7 +141,34 @@ func validateConfig() {
 	}
 }
 
-func validateMessageParameters(channelID string, userRoles []string, hostnameArg string) (validationResponse string, err error) {
+func validateMessageParameters(hostnameArg string) (err error) {
+	isValidHostname := false
+	for _, validHostname := range config.ValidHostnames {
+		if hostnameArg == validHostname {
+			isValidHostname = true
+			break
+		}
+	}
+
+	if !isValidHostname {
+		err := fmt.Errorf("[-] Message contained invalid hostname argument: '%s'", hostnameArg)
+		return err
+	}
+
+	if hostnameArg != hostname && hostnameArg != "all" {
+		err := fmt.Errorf("[!] Hostname mismatch: '%s' does not match servers hostname '%s'. Command probably is not intended for us.", hostnameArg, hostname)
+		return err
+	}
+
+	return nil
+}
+
+func isValidSource(authorID string, stateUserID, channelID string, userRoles []string) (err error) {
+	if authorID == stateUserID {
+		err := fmt.Errorf("[-] Ignoring message from bot itself")
+
+		return err
+	}
 
 	isValidChannel := false
 	for _, validChannel := range config.ValidChannelIDs {
@@ -168,10 +177,10 @@ func validateMessageParameters(channelID string, userRoles []string, hostnameArg
 			break
 		}
 	}
+
 	if !isValidChannel {
-		validationResponse := "We are not within a whitelisted channel"
 		err := fmt.Errorf("[-] Message from within invalid channel: '%s'", channelID)
-		return validationResponse, err
+		return err
 	}
 
 	hasValidRole := false
@@ -186,33 +195,13 @@ func validateMessageParameters(channelID string, userRoles []string, hostnameArg
 			break
 		}
 	}
+
 	if !hasValidRole {
-		validationResponse := "You don't have permission to do this"
 		err := fmt.Errorf("[-] Message from user with no valid role membership: '%v'", userRoles)
-		return validationResponse, err
+		return err
 	}
 
-	isValidHostname := false
-	for _, validHostname := range config.ValidHostnames {
-		if hostnameArg == validHostname {
-			isValidHostname = true
-			break
-		}
-	}
-
-	if !isValidHostname {
-		validationResponse := "Invalid hostname"
-		err := fmt.Errorf("[-] Message contained invalid hostname argument: '%s'", hostnameArg)
-		return validationResponse, err
-	}
-
-	if hostnameArg != hostname && hostnameArg != "all" {
-		validationResponse := ""
-		err := fmt.Errorf("[!] Hostname mismatch: '%s' does not match servers hostname '%s'. Command probably is not intended for us.", hostnameArg, hostname)
-		return validationResponse, err
-	}
-
-	return "", nil
+	return nil
 }
 
 func isValidCommand(validCommands map[string]struct{}, command string) bool {
