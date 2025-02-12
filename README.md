@@ -45,7 +45,6 @@ This bot uses a `config.json` file (see example file) for its settings. The file
 - `/stop <hostname|all>`: Stop the KF server(s).
 - `/restart <hostname|all>`: Restart the KF server(s).
 - `/reboot <hostname|all>`: Reboot the server machine(s) / OS.
-- `/help`: Show command syntax and examples.
 
 ### Example
 
@@ -61,7 +60,7 @@ Restart specific server:
 
 ### Bot logic and command flow
 - Each bot instance reads its configuration from the `config.json` file, which specifies its valid hostnames, channels, and roles.
-- When a command is received:
+- When a message / command is received:
   1. The bot checks if the message comes from a whitelisted channel (`valid_channelIDs`).
   2. It verifies if the user has the required role (`valid_roleIDs`).
   3. It validates the hostname argument in the command against the server's own hostname or the keyword `all`.
