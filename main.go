@@ -83,7 +83,7 @@ func main() {
 
 		err = validateMessageParameters(args[1])
 		if err != nil {
-			fmt.Printf("[-] Message verification failed: %v\n", err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 
