@@ -60,7 +60,7 @@ func main() {
 
 		err := isValidSource(m.Author.ID, s.State.User.ID, m.ChannelID, m.Member.Roles)
 		if err != nil {
-			fmt.Printf("[-] Message verification failed: %v\n", err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 
@@ -81,7 +81,7 @@ func main() {
 		}
 
 		if len(args) < 2 {
-			s.ChannelMessageSend(m.ChannelID, "Invalid number of arguments. Try 'help'")
+			fmt.Printf("[-] Invalid number of arguments\n")
 
 			return
 		}
