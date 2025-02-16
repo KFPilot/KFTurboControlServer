@@ -54,9 +54,6 @@ func main() {
 	}
 
 	sess.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		if m.Author.ID == s.State.User.ID {
-			return
-		}
 
 		if m.GuildID == "" || m.Member == nil {
 			return
@@ -67,8 +64,6 @@ func main() {
 			fmt.Printf("%v\n", err)
 			return
 		}
-
-		// Check if the bot
 
 		validCommandPrefixes := map[string]struct{}{
 			"/start":   {},
@@ -92,23 +87,23 @@ func main() {
 
 		err = validateMessageParameters(args[1])
 		if err != nil {
-			fmt.Printf("[-] Message verification failed: %v\n", err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 
 		switch args[0] {
 		case "/start":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "start-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/stop":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "stop-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/restart":
 			execResponse := handleCommand(args[0], "/home/steamcmd/manage_kfserver.sh", "restart-server")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		case "/reboot":
 			execResponse := handleCommand(args[0], "reboot", "")
-			s.ChannelMessageSend(m.ChannelID, execResponse)
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s - %s", hostname, execResponse))
 		default:
 			return
 		}
