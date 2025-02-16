@@ -58,6 +58,10 @@ func main() {
 			return
 		}
 
+		if m.GuildID == "" || m.Member == nil {
+			return
+		}
+
 		err := isValidSource(m.Author.ID, s.State.User.ID, m.ChannelID, m.Member.Roles)
 		if err != nil {
 			fmt.Printf("%v\n", err)
