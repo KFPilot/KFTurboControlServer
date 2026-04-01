@@ -5,6 +5,9 @@ A Go-based Discord bot primarily designed for managing Killing Floor servers, al
 ## Features
 
 - **Server Management**: Start, stop, restart, or reboot KF servers.
+- **Slash Commands**: Uses Discord application commands instead of parsing plain text messages.
+- **Autocomplete**: Hostname option supports Discord autocomplete (including `all`).
+- **Command Discovery**: `/commands` shows which commands are available and whether you can execute them in the current channel.
 - **Hostname Validation**: Commands can target specific servers or all servers.
 - **Multi-Server**: Can be run on multiple servers simultaniously. Only targetet servers will react.
 
@@ -41,32 +44,32 @@ This bot uses a `config.json` file (see example file) for its settings. The file
 ## Usage
 ### Discord-Commands
 
-- `/start <hostname|all>`: Start the KF server(s).
-- `/stop <hostname|all>`: Stop the KF server(s).
-- `/restart <hostname|all>`: Restart the KF server(s).
-- `/reboot <hostname|all>`: Reboot the server machine(s) / OS.
+- `/start hostname:<hostname|all>`: Start the KF server(s).
+- `/stop hostname:<hostname|all>`: Stop the KF server(s).
+- `/restart hostname:<hostname|all>`: Restart the KF server(s).
+- `/reboot hostname:<hostname|all>`: Reboot the server machine(s) / OS.
+- `/commands`: Show available commands and whether execution is allowed for your current role/channel context.
 
 ### Example
 
 Restart all servers:
 ```bash
-/restart all
+/restart hostname:all
 ```
 
 Restart specific server:
 ```bash
-/restart serverhostname
+/restart hostname:serverhostname
 ```
 
 ### Bot logic and command flow
 - Each bot instance reads its configuration from the `config.json` file, which specifies its valid hostnames, channels, and roles.
-- When a message / command is received:
-  1. The bot checks if the message comes from a whitelisted channel (`valid_channelIDs`).
+- When a slash command is received:
+  1. The bot checks if the command is run in a whitelisted channel (`valid_channelIDs`).
   2. It verifies if the user has the required role (`valid_roleIDs`).
-  3. It validates the hostname argument in the command against the server's own hostname or the keyword `all`.
+  3. It validates the `hostname` argument against configured hostnames and confirms target matches local hostname or `all`.
 - If all validations pass:
   - The command is executed on the target server or all servers if `all` is specified.
-  - Logs and responses are generated to indicate command execution status.
+  - Discord responses include execution intent and command output/status.
 - If validations fail:
-  - The bot sends an error message to the user and logs the issue.
-
+  - The bot sends an error message and logs the issue.
